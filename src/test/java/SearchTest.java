@@ -5,7 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 
@@ -18,7 +18,7 @@ public class SearchTest {
 
     private WebDriver driver;
 
-    // my function which includes delays after steps
+//     my function which includes delays
     private void waitt(int timee) {
         try {Thread.sleep(timee);}
         catch (InterruptedException ex) {Thread.currentThread().interrupt();}
@@ -33,14 +33,11 @@ public class SearchTest {
     }
 
 //    @After
-//    public void tearDown() {driver.quit();}
+//        public void tearDown() {
+//        driver.quit();}
 
 
-
-    @Test
-    public void firstTest() {System.out.println("Hello");}
-
-
+// *************** Exercise 1 ***************
 
     @Test
     public void loginTest() {
@@ -57,13 +54,10 @@ public class SearchTest {
     public void pricesTest() {
         driver.get("https://men-men-s-01.codersguru.pl/");
         List<WebElement> lstPrices = driver.findElements(By.xpath("//ul//li//a"));
-        for (WebElement el : lstPrices) {
-            if (el.getText() == "Cennik") {
-                el.click();
+        lstPrices.get(1).click();
 
-                assertEquals("Pomoc w programistycznych problemach", driver.findElement(By.cssSelector("p.pricing__subheader")).getText());
-            }
-        }
+        assertEquals("Cennik", driver.findElement(By.cssSelector("h1.pricing__header")).getText());
+
 
     }
 
@@ -100,8 +94,6 @@ public class SearchTest {
             System.out.println("Missing link");
         }
     }
-
-//    ? How to write assertion to check whether email client was opened correctly ?
 
 
     @Test
@@ -142,36 +134,26 @@ public class SearchTest {
 
         ArrayList<String> availableWindows = new ArrayList<>(driver.getWindowHandles());
 
-        if(!availableWindows.isEmpty()) {
+        driver.switchTo().window(availableWindows.get(1));
 
-            System.out.println("NOT EMPTY");
-            System.out.println(availableWindows.size());
+        waitt(5000);  // my function which includes delay; WebDriverWait wait does not work for unknown reason
 
-            driver.switchTo().window(availableWindows.get(1));
-            WebElement kursZdalny = driver.findElement(By.linkText("KURS ZDALNY"));
+        String currentUrl = driver.getCurrentUrl();
 
-            assertEquals("KURS ZDALNY", kursZdalny.getText());
-            }
-
-
-
-//        inne asercje
-//        assertEquals("Dlaczego warto nas wybrać?", driver.findElement(By.xpath("//p[@class='welcome__text']")).getText());
-//        assertEquals("Dlaczego warto nas wybrać?", driver.findElement(By.className("welcome__text")).getText());
-//        assertEquals("OFERTA KURSÓW", driver.findElement(By.linkText("OFERTA KURSÓW")).getText());
-
-
+        assertEquals(currentUrl, "https://coderslab.pl/pl");
     }
 
-    // ??? Nie działają asercje. dlaczego ???
 
+// *************** Optional tests to check how CodersLab page works if opened directly ***************
 
     @Test
     public void coderslabPageTest1() {
 
         driver.get("https://coderslab.pl/pl");
-        driver.findElement(By.linkText("OFERTA KURSÓW")).click();
 
+        WebDriverWait wait = new WebDriverWait(driver, 5);
+            WebElement searchButton = wait.until(ExpectedConditions.elementToBeClickable(By.linkText("OFERTA KURSÓW")));
+            searchButton.click();
     }
 
     @Test
@@ -182,7 +164,8 @@ public class SearchTest {
 
     }
 
-    } // end of public class SearchTest
+
+} // end of public class SearchTest
 
 
 
